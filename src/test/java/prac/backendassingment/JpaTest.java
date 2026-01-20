@@ -103,11 +103,12 @@ public class JpaTest {
         saved2 = discountService.updateDiscount(new DiscountUpdateRequest(
                 saved2.getId(),
                 saved2.getName(),
-                saved2.getDiscountPolicy(),
+                discountPolicy,
                 conditions3
         ));
         System.out.println("saved2 Id: "+saved2.getId());
         Assertions.assertThat(saved2.getConditions()).containsExactlyInAnyOrderElementsOf(conditions3);
+        Assertions.assertThat(saved2.getDiscountPolicy()).isEqualTo(discountPolicy);
 
         discountService.deleteDiscountById(saved1.getId());
 
