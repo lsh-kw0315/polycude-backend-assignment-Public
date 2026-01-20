@@ -74,7 +74,7 @@ public class JpaTest {
         List<DiscountCondition> conditions2 =  new ArrayList<>();
         conditions2.add(condition2);
         conditions2.add(condition3);
-        DiscountPolicy policy2 = new DiscountPolicy(DiscountMethod.FIXED, new BigDecimal("0.9"));
+        DiscountPolicy policy2 = new DiscountPolicy(DiscountMethod.PERCENTAGE, new BigDecimal("0.9"));
         Discount discount2 = new Discount("10퍼 할인",policy2 ,conditions2);
         Discount saved2 = discountService.saveDiscount(new DiscountSaveRequest(
                 discount2.getName(),
@@ -96,6 +96,7 @@ public class JpaTest {
                discount -> Assertions.assertThat(discount.getConditions()).containsAnyElementsOf(search)
         );
 
+        DiscountPolicy discountPolicy = new DiscountPolicy(DiscountMethod.PERCENTAGE, new BigDecimal("0.5"));
         List<DiscountCondition> conditions3 = new ArrayList<>();
         conditions3.add(condition4);
         conditions3.add(condition2);
@@ -234,6 +235,15 @@ public class JpaTest {
         Payment payment2 = paymentService.commitPayment(
                 new PaymentCommitRequest(order2.getId(), PaymentMethod.CREDIT)
         );
+
+        Assertions.assertThat(payment1.getCreatedAt())
+                .isNotNull();
+
+        Assertions.assertThat(payment2.getCreatedAt())
+                .isNotNull();
+
+        System.out.println(payment1.getCreatedAt());
+        System.out.println(payment2.getCreatedAt());
 
         Long expected1 = new BigDecimal(1000*5 + 1500*5).subtract(new BigDecimal(1000)).longValue();
         Long expected2 = new BigDecimal(1000*5 + 1500*5).multiply(new BigDecimal("0.9")).longValue();
