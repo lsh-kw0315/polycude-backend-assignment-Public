@@ -44,7 +44,7 @@ public class DiscountCalculatorService {
             price = discount.getDiscountPolicy().applyDiscount(price);
             long discountedPrice = before.subtract(price).longValue();
             if(discountedPrice > 0){
-                appliedDiscounts.add(new AppliedDiscount(discount, discountedPrice));
+                appliedDiscounts.add(new AppliedDiscount(discount, discountedPrice, null));
             }
         }
         return price;

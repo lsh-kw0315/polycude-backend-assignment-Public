@@ -321,7 +321,10 @@ public class JpaTest {
         Payment find1 = paymentService.findById(payment1.getId());
 
         Assertions.assertThatThrownBy(()->discountService.findDiscountById(discount1.getId())).isInstanceOf(IllegalArgumentException.class);
-        Assertions.assertThat(payment1.getAppliedDiscounts()).containsExactlyInAnyOrderElementsOf(find1.getAppliedDiscounts());
+        Assertions.assertThat(payment1.getAppliedDiscounts())    .usingRecursiveComparison()
+                .ignoringFields("createdDate") // 1. 시간 필드 무시 (필드명 입력)
+                .ignoringCollectionOrder()                     // 2. 순서 무시 (= containsExactlyInAnyOrder)
+                .isEqualTo(find1.getAppliedDiscounts());
         System.out.println("payment1:"+payment1.getAppliedDiscounts());
         System.out.println("find1:"+find1.getAppliedDiscounts());
 
@@ -340,7 +343,10 @@ public class JpaTest {
         System.out.println("modified:"+modified);
 
         Payment find2 = paymentService.findById(payment2.getId());
-        Assertions.assertThat(payment2.getAppliedDiscounts()).containsExactlyInAnyOrderElementsOf(find2.getAppliedDiscounts());
+        Assertions.assertThat(payment2.getAppliedDiscounts())    .usingRecursiveComparison()
+                .ignoringFields("createdDate") // 1. 시간 필드 무시 (필드명 입력)
+                .ignoringCollectionOrder()                     // 2. 순서 무시 (= containsExactlyInAnyOrder)
+                .isEqualTo(find2.getAppliedDiscounts());
 
         System.out.println("payment2:"+payment1.getAppliedDiscounts());
         System.out.println("find2:"+find1.getAppliedDiscounts());

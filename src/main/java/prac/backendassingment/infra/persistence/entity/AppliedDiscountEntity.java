@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-@EntityListeners(AuditingEntityListener.class)
 public class AppliedDiscountEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +37,6 @@ public class AppliedDiscountEntity {
     @Embedded
     private DiscountConditionValue discountConditionValue;
 
-    @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdDate;
 

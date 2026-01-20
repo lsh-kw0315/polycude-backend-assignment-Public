@@ -40,7 +40,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
         PaymentEntity saved = paymentJpaRepository.save(paymentEntity);
         List<AppliedDiscount> discounts = payment.getAppliedDiscounts();
         List<AppliedDiscountEntity> savedHistory = appliedDiscountJpaRepository.saveAll(
-          toAppliedDiscountEntities(saved.getId(), discounts)
+          toAppliedDiscountEntities(saved, discounts)
         );
 
         return toDomain(saved, savedHistory);
@@ -73,7 +73,8 @@ public class PaymentRepositoryImpl implements PaymentRepository {
                                         list.stream()
                                                 .map(e -> new DiscountCondition(e.getDiscountConditionValue().getDiscountReason(), e.getDiscountConditionValue().getCondition()))
                                                 .collect(Collectors.toList())),
-                                entity.getDiscountedPrice()
+                                entity.getDiscountedPrice(),
+                                entity.getCreatedDate()
                         )
             );
         }
@@ -81,20 +82,20 @@ public class PaymentRepositoryImpl implements PaymentRepository {
         return result;
     }
 
-    private List<AppliedDiscountEntity> toAppliedDiscountEntities(Long paymentId, List<AppliedDiscount> appliedDiscounts){
+    private List<AppliedDiscountEntity> toAppliedDiscountEntities(PaymentEntity paymentEntity, List<AppliedDiscount> appliedDiscounts){
         List<AppliedDiscountEntity> result= new ArrayList<>();
-        PaymentEntity proxy = paymentJpaRepository.getReferenceById(paymentId);
         for(AppliedDiscount appliedDiscount : appliedDiscounts){
             for(DiscountCondition condition : appliedDiscount.getConditions()){
                 result.add(
                         new AppliedDiscountEntity(
-                                proxy,
+                                paymentEntity,
                                 appliedDiscount.getName(),
                                 appliedDiscount.getDiscountedPrice(),
                                 appliedDiscount.getDiscountPolicy().getDiscountMethod(),
                                 appliedDiscount.getDiscountPolicy().getDiscountAmount(),
                                 condition.getDiscountReason(),
-                                condition.getCondition()
+                                condition.getCondition(),
+                                paymentEntity.getCreatedDate()
 
                         )
                 );
