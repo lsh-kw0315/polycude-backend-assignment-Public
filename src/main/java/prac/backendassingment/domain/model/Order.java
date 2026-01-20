@@ -1,9 +1,6 @@
 package prac.backendassingment.domain.model;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +8,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
+@ToString
 public class Order {
     private Long id;
     private Long memberId;

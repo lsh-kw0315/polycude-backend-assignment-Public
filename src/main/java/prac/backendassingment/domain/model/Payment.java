@@ -4,6 +4,7 @@ import lombok.*;
 import prac.backendassingment.global.enums.PaymentMethod;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -14,12 +15,13 @@ public class Payment {
     private PaymentMethod paymentMethod;
     private Long finalPrice;
     private LocalDateTime createdAt;
+    private List<AppliedDiscount> appliedDiscounts;
 
-    public Payment(Long orderId, PaymentMethod paymentMethod, Long finalPrice){
-        this(null, orderId, paymentMethod, finalPrice, null);
+    public Payment(Long orderId, PaymentMethod paymentMethod, Long finalPrice, List<AppliedDiscount> appliedDiscounts){
+        this(null, orderId, paymentMethod, finalPrice, null, appliedDiscounts);
     }
 
-    public Payment(Long id, Long orderId, PaymentMethod paymentMethod, Long finalPrice, LocalDateTime createdAt){
+    public Payment(Long id, Long orderId, PaymentMethod paymentMethod, Long finalPrice, LocalDateTime createdAt, List<AppliedDiscount> appliedDiscounts){
         this.id = id;
 
         if(orderId == null || orderId <=0) throw new IllegalArgumentException("결제할 주문이 누락되어서는 안됩니다.");
@@ -32,5 +34,7 @@ public class Payment {
         this.finalPrice = finalPrice;
 
         this.createdAt = createdAt;
+
+        this.appliedDiscounts = appliedDiscounts;
     }
 }

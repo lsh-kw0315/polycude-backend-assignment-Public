@@ -3,10 +3,12 @@ package prac.backendassingment.application.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import prac.backendassingment.application.dto.DiscountResult;
 import prac.backendassingment.application.dto.PaymentCommitRequest;
 import prac.backendassingment.application.util.DiscountFactor;
 import prac.backendassingment.domain.model.*;
 import prac.backendassingment.domain.repository.PaymentRepository;
+import prac.backendassingment.infra.persistence.repository.AppliedDiscountJpaRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -26,14 +28,16 @@ public class PaymentService {
         Member member = memberService.findMemberById(order.getMemberId());
 
         DiscountFactor factor = new DiscountFactor(order, member, request.getPaymentMethod());
-        Long finalPrice = discountService.calculateFinalPrice(factor);
+        DiscountResult discountResult = discountService.calculateFinalPrice(factor);
 
         Payment payment = new Payment(
                 request.getOrderId(),
                 request.getPaymentMethod(),
-                finalPrice
+                discountResult.getFinalPrice(),
+                discountResult.getDiscounts()
         );
 
         return paymentRepository.pay(payment);
+
     }
 }

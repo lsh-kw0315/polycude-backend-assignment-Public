@@ -7,6 +7,7 @@ import prac.backendassingment.global.enums.DiscountReason;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
+@ToString
 public class DiscountCondition {
     private DiscountReason discountReason;
     private String condition;

@@ -4,9 +4,12 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import prac.backendassingment.domain.model.AppliedDiscount;
 import prac.backendassingment.domain.model.Member;
 import prac.backendassingment.domain.model.Order;
 import prac.backendassingment.global.enums.PaymentMethod;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

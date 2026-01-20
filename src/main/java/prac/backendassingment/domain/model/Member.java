@@ -1,14 +1,12 @@
 package prac.backendassingment.domain.model;
 
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import prac.backendassingment.global.enums.MemberRank;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
+@ToString
 public class Member {
     private Long id;
     private MemberRank rank;

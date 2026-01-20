@@ -5,6 +5,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
+@ToString
 public class OrderItem {
     private Long id;
     private Long productId;

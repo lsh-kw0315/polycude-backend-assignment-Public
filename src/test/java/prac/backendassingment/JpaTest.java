@@ -253,4 +253,95 @@ public class JpaTest {
         Assertions.assertThat(payment2.getFinalPrice())
                 .isEqualTo(expected2);
     }
+
+    @Test
+    @Rollback
+    public void 정책변경_삭제_테스트(){
+        ProductAddRequest productAddRequest1 = new ProductAddRequest("상품1", 1000L, 15L);
+        Product product1 = productService.addNewProduct(productAddRequest1);
+
+        ProductAddRequest productAddRequest2 = new ProductAddRequest("상품2", 1500L, 10L);
+        Product product2 = productService.addNewProduct(productAddRequest2);
+
+        //===============
+
+        Discount discount1 = discountService.saveDiscount(
+                new DiscountSaveRequest(
+                        "1000원 할인",
+                        new DiscountPolicy(DiscountMethod.FIXED, new BigDecimal(1000)),
+                        List.of(new DiscountCondition(DiscountReason.MEMBER_RANK, MemberRank.VIP.name()))
+                )
+        );
+
+        Discount discount2 = discountService.saveDiscount(
+                new DiscountSaveRequest(
+                        "10% 할인",
+                        new DiscountPolicy(DiscountMethod.PERCENTAGE, new BigDecimal("0.9")),
+                        List.of(new DiscountCondition(DiscountReason.MEMBER_RANK, MemberRank.VVIP.name()))
+                )
+        );
+
+        Discount discount3 = discountService.saveDiscount(
+                new DiscountSaveRequest(
+                        "5% 할인",
+                        new DiscountPolicy(DiscountMethod.PERCENTAGE, new BigDecimal("0.95")),
+                        List.of(new DiscountCondition(DiscountReason.PAYMENT_METHOD, PaymentMethod.POINT.name()),
+                                new DiscountCondition(DiscountReason.PAYMENT_METHOD, PaymentMethod.CREDIT.name()))
+                )
+        );
+
+        //================
+        Member member1 = memberService.joinMember(new MemberJoinRequest(MemberRank.VIP));
+        Member member2 = memberService.joinMember(new MemberJoinRequest(MemberRank.VVIP));
+
+        List<OrderItem> orderItems1 = List.of(
+                new OrderItem(product1.getId(), product1.getName(),5L, product1.getPrice()),
+                new OrderItem(product2.getId(), product2.getName(),5L, product2.getPrice())
+        );
+
+        List<OrderItem> orderItems2 = List.of(
+                new OrderItem(product1.getId(), product1.getName(),5L, product1.getPrice()),
+                new OrderItem(product2.getId(), product2.getName(),5L, product2.getPrice())
+        );
+
+        Order order1 = orderService.submitOrder(new OrderSubmitRequest(member1.getId(), orderItems1));
+        Order order2 = orderService.submitOrder(new OrderSubmitRequest(member2.getId(), orderItems2));
+
+        Payment payment1 = paymentService.commitPayment(
+                new PaymentCommitRequest(order1.getId(), PaymentMethod.POINT)
+        );
+
+        Payment payment2 = paymentService.commitPayment(
+                new PaymentCommitRequest(order2.getId(), PaymentMethod.CREDIT)
+        );
+
+        //삭제
+        discountService.deleteDiscountById(discount1.getId());
+        Payment find1 = paymentService.findById(payment1.getId());
+
+        Assertions.assertThatThrownBy(()->discountService.findDiscountById(discount1.getId())).isInstanceOf(IllegalArgumentException.class);
+        Assertions.assertThat(payment1.getAppliedDiscounts()).containsExactlyInAnyOrderElementsOf(find1.getAppliedDiscounts());
+        System.out.println("payment1:"+payment1.getAppliedDiscounts());
+        System.out.println("find1:"+find1.getAppliedDiscounts());
+
+        //수정
+        discountService.updateDiscount(
+                new DiscountUpdateRequest(discount2.getId(),
+                        "20% 할인",
+                        new DiscountPolicy(DiscountMethod.PERCENTAGE, new BigDecimal("0.8")),
+                        List.of(new DiscountCondition(DiscountReason.MEMBER_RANK, MemberRank.VIP.name()))
+                        )
+        );
+
+        Discount modified = discountService.findDiscountById(discount2.getId());
+        Assertions.assertThat(modified).isNotEqualTo(discount2);
+        System.out.println("discount2:"+discount2);
+        System.out.println("modified:"+modified);
+
+        Payment find2 = paymentService.findById(payment2.getId());
+        Assertions.assertThat(payment2.getAppliedDiscounts()).containsExactlyInAnyOrderElementsOf(find2.getAppliedDiscounts());
+
+        System.out.println("payment2:"+payment1.getAppliedDiscounts());
+        System.out.println("find2:"+find1.getAppliedDiscounts());
+    }
 }
