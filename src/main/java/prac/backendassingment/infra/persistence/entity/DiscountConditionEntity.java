@@ -5,7 +5,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import prac.backendassingment.global.enums.DiscountReason;
 
 @Entity
 @Table(name = "discount_condition")

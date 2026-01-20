@@ -3,16 +3,10 @@ package prac.backendassingment.application.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import prac.backendassingment.application.dto.DiscountSearchRequest;
 import prac.backendassingment.application.dto.PaymentCommitRequest;
 import prac.backendassingment.application.util.DiscountFactor;
 import prac.backendassingment.domain.model.*;
 import prac.backendassingment.domain.repository.PaymentRepository;
-import prac.backendassingment.domain.service.DiscountCalculatorService;
-import prac.backendassingment.global.enums.DiscountReason;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

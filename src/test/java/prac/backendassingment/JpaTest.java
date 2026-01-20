@@ -1,8 +1,6 @@
 package prac.backendassingment;
 
-import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,12 +8,10 @@ import org.springframework.test.annotation.Rollback;
 import prac.backendassingment.application.dto.*;
 import prac.backendassingment.application.service.*;
 import prac.backendassingment.domain.model.*;
-import prac.backendassingment.domain.repository.DiscountRepository;
 import prac.backendassingment.global.enums.DiscountMethod;
 import prac.backendassingment.global.enums.DiscountReason;
 import prac.backendassingment.global.enums.MemberRank;
 import prac.backendassingment.global.enums.PaymentMethod;
-import prac.backendassingment.infra.persistence.entity.DiscountConditionEntity;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

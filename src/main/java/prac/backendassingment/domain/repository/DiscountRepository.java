@@ -2,7 +2,6 @@ package prac.backendassingment.domain.repository;
 
 import prac.backendassingment.domain.model.Discount;
 import prac.backendassingment.domain.model.DiscountCondition;
-import prac.backendassingment.global.enums.DiscountReason;
 
 import java.util.List;
 import java.util.Optional;

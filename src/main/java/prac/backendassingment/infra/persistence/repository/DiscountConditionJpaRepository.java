@@ -3,15 +3,11 @@ package prac.backendassingment.infra.persistence.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import prac.backendassingment.domain.model.DiscountCondition;
-import prac.backendassingment.domain.model.DiscountPolicy;
-import prac.backendassingment.global.enums.DiscountReason;
 import prac.backendassingment.infra.persistence.entity.DiscountConditionEntity;
 import prac.backendassingment.infra.persistence.entity.DiscountConditionValue;
 import prac.backendassingment.infra.persistence.entity.DiscountPolicyEntity;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface DiscountConditionJpaRepository extends JpaRepository<DiscountConditionEntity, Long> {
 

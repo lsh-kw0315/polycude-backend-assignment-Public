@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import prac.backendassingment.domain.model.DiscountCondition;
-import prac.backendassingment.domain.model.DiscountPolicy;
 
 import java.util.List;
 

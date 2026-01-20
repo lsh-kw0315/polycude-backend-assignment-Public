@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import prac.backendassingment.global.enums.PaymentMethod;
 
-import java.time.LocalDateTime;
-
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

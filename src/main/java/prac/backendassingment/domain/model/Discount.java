@@ -1,10 +1,6 @@
 package prac.backendassingment.domain.model;
 
 import lombok.*;
-import prac.backendassingment.global.enums.DiscountMethod;
-import prac.backendassingment.global.enums.DiscountReason;
-
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 

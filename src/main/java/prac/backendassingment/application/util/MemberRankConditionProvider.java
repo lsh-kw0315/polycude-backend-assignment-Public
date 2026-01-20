@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import prac.backendassingment.domain.model.DiscountCondition;
 import prac.backendassingment.global.enums.DiscountReason;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component

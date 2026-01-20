@@ -2,8 +2,6 @@ package prac.backendassingment.domain.service;
 
 import org.springframework.stereotype.Service;
 import prac.backendassingment.domain.model.Discount;
-import prac.backendassingment.domain.model.DiscountPolicy;
-import prac.backendassingment.domain.model.Member;
 import prac.backendassingment.domain.model.Order;
 
 import java.math.BigDecimal;
