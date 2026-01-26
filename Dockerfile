@@ -25,7 +25,7 @@ RUN ./gradlew build --no-daemon -x test
 # =================================================================
 # Stage 2: Create the final, small runtime image
 # =================================================================
-FROM eclipse-temurin:17-jre-jammy
+FROM gcr.io/google-appengine/openjdk:17
 
 WORKDIR /app
 
