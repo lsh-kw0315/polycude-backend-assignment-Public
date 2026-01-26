@@ -36,6 +36,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager'
+    testImplementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager'
 }
 
 tasks.named('test') {
