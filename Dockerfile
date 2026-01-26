@@ -33,4 +33,4 @@ WORKDIR /app
 COPY --from=builder /workspace/build/libs/*.jar app.jar
 
 # 컨테이너 실행 시 실행될 명령어 (prod 프로파일 활성화)
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "app.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=deploy", "app.jar"]
