@@ -8,7 +8,7 @@ env:
   # GCP 및 이미지 관련 환경 변수 설정 (Secrets에서 가져온 값을 env 변수로 재정의)
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }} # secrets에서 가져와 env에 정의
   GCP_ZONE: ${{ secrets.GCP_ZONE }}             # secrets에서 가져와 env에 정의
-  GAR_LOCATION: asia-northeast3
+  GAR_LOCATION: us-east1
   REPOSITORY: my-repo
   IMAGE_NAME: my-app
   VM_INSTANCE_NAME: ${{ secrets.GCP_VM_NAME }}  # secrets에서 가져와 env에 정의
