@@ -48,16 +48,16 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-      # 5. (추가됨) 유닛 테스트 실행
-      - name: Run tests with Gradle
-        run: ./gradlew test
-
-      # 6. GCP 인증 (Key File 없이!)
+      # 5. GCP 인증 (Key File 없이!)
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      # 6. (추가됨) 유닛 테스트 실행
+      - name: Run tests with Gradle
+        run: ./gradlew test
 
       # 7. Docker 인증 설정
       - name: Configure Docker
