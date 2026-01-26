@@ -16,4 +16,4 @@ spring:
 
   cloud:
     gcp:
-      project-id: ${sm://project-id}
+      project-id: aerial-velocity-485514-i8
