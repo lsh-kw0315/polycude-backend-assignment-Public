@@ -68,40 +68,6 @@ public class DiscountRepositoryImpl implements DiscountRepository {
 
     @Override
     public List<Discount> findAllByConditions(List<DiscountCondition> conditions) {
-//        Map<Long, List<DiscountConditionEntity>> policyConditionMap = new HashMap<>();
-//        List<Long> policyIds = new ArrayList<>();
-//        conditions.forEach(condition -> {
-//            List<DiscountConditionEntity> list = discountConditionJpaRepository.findByConditionAndDiscountReason(condition.getCondition(), condition.getDiscountReason());
-//            if(list.isEmpty()) {
-//                return;
-//            }
-//
-//            list.forEach(entity -> {
-//                if(policyConditionMap.containsKey(entity.getDiscountPolicy().getId())){
-//                    List<DiscountConditionEntity> exList = policyConditionMap.get(entity.getDiscountPolicy().getId());
-//                    exList.add(entity);
-//                    policyConditionMap.put(entity.getDiscountPolicy().getId(), exList);
-//                }else{
-//                    List<DiscountConditionEntity> init = new ArrayList<>();
-//                    init.add(entity);
-//                    policyConditionMap.put(entity.getDiscountPolicy().getId(), init);
-//                }
-//                policyIds.add(entity.getDiscountPolicy().getId());
-//            });
-//
-//        });
-//
-//        if(policyIds.isEmpty()) return new ArrayList<>();
-//        List<DiscountPolicyEntity> policies =  discountPolicyJpaRepository.findAllById(policyIds);
-//
-//        List<Discount> result = new ArrayList<>();
-//        policies.forEach(
-//                policy -> {
-//                    result.add(toDomain(policy, policyConditionMap.get(policy.getId())));
-//                }
-//        );
-//        return result;
-
         // (DiscountReason, Condition) 쌍을 생성
         List<DiscountConditionValue> values = conditions.stream()
                 .map(c -> new DiscountConditionValue(c.getDiscountReason(), c.getCondition()))

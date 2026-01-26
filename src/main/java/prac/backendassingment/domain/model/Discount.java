@@ -7,6 +7,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EqualsAndHashCode
+@ToString
 public class Discount {
     private Long id; //DiscountPolicy의 id
     private String name;

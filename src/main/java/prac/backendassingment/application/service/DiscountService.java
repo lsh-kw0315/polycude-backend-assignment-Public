@@ -3,6 +3,7 @@ package prac.backendassingment.application.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import prac.backendassingment.application.dto.DiscountResult;
 import prac.backendassingment.application.dto.DiscountSaveRequest;
 import prac.backendassingment.application.dto.DiscountSearchRequest;
 import prac.backendassingment.application.dto.DiscountUpdateRequest;
@@ -62,7 +63,7 @@ public class DiscountService {
     }
 
     // PaymentService는 이 메서드만 호출하면 됨
-    public Long calculateFinalPrice(DiscountFactor factor) {
+    public DiscountResult calculateFinalPrice(DiscountFactor factor) {
         // 1. Context에서 조건들을 추출 (Provider들에게 위임)
         List<DiscountCondition> conditions = providers.stream()
                 .filter(p -> p.support(factor))

@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EqualsAndHashCode
+@ToString
 public class DiscountPolicy {
     private DiscountMethod discountMethod;
     private BigDecimal discountAmount;
