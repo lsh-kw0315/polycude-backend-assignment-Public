@@ -5,10 +5,16 @@ on:
     branches: [ "main" ]
 
 env:
-  # GCP 및 이미지 관련 환경 변수 설정
-  GAR_LOCATION: us-east1 # 서울 리전으로 변경 (필요시 수정)
+  # GCP 및 이미지 관련 환경 변수 설정 (Secrets에서 가져온 값을 env 변수로 재정의)
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }} # secrets에서 가져와 env에 정의
+  GCP_ZONE: ${{ secrets.GCP_ZONE }}             # secrets에서 가져와 env에 정의
+  GAR_LOCATION: asia-northeast3
   REPOSITORY: my-repo
   IMAGE_NAME: my-app
+  VM_INSTANCE_NAME: ${{ secrets.GCP_VM_NAME }}  # secrets에서 가져와 env에 정의
+
+  # 이미지 전체 경로를 변수로 만들어 재사용 (이젠 env 변수로 다른 env 변수 참조 가능)
+  IMAGE_TAG: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
 
 
 jobs:
@@ -63,25 +69,20 @@ jobs:
       # 8. 이미지 빌드 및 푸시 (테스트 스킵)
       - name: Build and Push Docker Image
         run: |
-          # Dockerfile 내에서 테스트를 중복 실행하지 않도록 -x test 옵션 추가
-          docker build -t  ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest .
-          docker push  ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker build -t ${{ env.IMAGE_TAG }} .
+          docker push ${{ env.IMAGE_TAG }}
 
       # 9. VM에 배포 (IAP 터널링 사용)
       - name: Deploy to VM
         run: |
-          gcloud compute ssh ${{ secrets.VM_INSTANCE_NAME }} --zone ${{ secrets.GCP_ZONE }} --tunnel-through-iap --command "
+          gcloud compute ssh ${{ env.VM_INSTANCE_NAME }} --zone ${{ env.GCP_ZONE }} --tunnel-through-iap --command "
             # VM 내부에서 실행될 명령어들
-            # Artifact Registry에서 이미지를 받기 위해 Docker 인증
             gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
           
-            # 최신 이미지 pull
-            docker pull ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+            docker pull ${{ env.IMAGE_TAG }}
           
-            # 기존 컨테이너 중지 및 삭제 (오류 무시)
             docker stop ${{ env.IMAGE_NAME }} || true
             docker rm ${{ env.IMAGE_NAME }} || true
           
-            # 새 컨테이너 실행
-            docker run -d --restart always --name ${{ env.IMAGE_NAME }} -p 8080:8080 ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+            docker run -d --restart always --name ${{ env.IMAGE_NAME }} -p 8080:8080 ${{ env.IMAGE_TAG }}
           "
