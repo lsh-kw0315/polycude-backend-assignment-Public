@@ -3,7 +3,7 @@ spring:
     gcp:
       project-id: aerial-velocity-485514-i8
   config:
-    import: "gcp:secretmanager:/"
+    import: "sm@"
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
@@ -13,6 +13,6 @@ spring:
         show_sql: false
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${sm://db-url}
-    username: ${sm://db-username}
-    password: ${sm://db-password}
+    url: ${sm@db-url}
+    username: ${sm@db-username}
+    password: ${sm@db-password}
