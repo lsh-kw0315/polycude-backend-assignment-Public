@@ -1,0 +1,92 @@
+name: CI/CD Pipeline to GCP VM
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  # GCP 및 이미지 관련 환경 변수 설정
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_ZONE: ${{ secrets.GCP_ZONE }}
+  GAR_LOCATION: us-east1 # 서울 리전으로 변경 (필요시 수정)
+  REPOSITORY: my-repo
+  IMAGE_NAME: my-app
+  VM_INSTANCE_NAME: ${{ secrets.GCP_VM_NAME }}
+
+  # 이미지 전체 경로를 변수로 만들어 재사용
+  IMAGE_TAG: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      # 1. 소스 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. JDK 17 설정
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Gradle 캐싱 설정 (빌드 속도 향상)
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      # 4. (추가됨) Gradle 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
+      # 5. (추가됨) 유닛 테스트 실행
+      - name: Run tests with Gradle
+        run: ./gradlew test
+
+      # 6. GCP 인증 (Key File 없이!)
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      # 7. Docker 인증 설정
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev
+
+      # 8. 이미지 빌드 및 푸시 (테스트 스킵)
+      - name: Build and Push Docker Image
+        run: |
+          # Dockerfile 내에서 테스트를 중복 실행하지 않도록 -x test 옵션 추가
+          docker build -t ${{ env.IMAGE_TAG }} .
+          docker push ${{ env.IMAGE_TAG }}
+
+      # 9. VM에 배포 (IAP 터널링 사용)
+      - name: Deploy to VM
+        run: |
+          gcloud compute ssh ${{ env.VM_INSTANCE_NAME }} --zone ${{ env.GCP_ZONE }} --tunnel-through-iap --command "
+            # VM 내부에서 실행될 명령어들
+            # Artifact Registry에서 이미지를 받기 위해 Docker 인증
+            gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev --quiet
+          
+            # 최신 이미지 pull
+            docker pull ${{ env.IMAGE_TAG }}
+          
+            # 기존 컨테이너 중지 및 삭제 (오류 무시)
+            docker stop ${{ env.IMAGE_NAME }} || true
+            docker rm ${{ env.IMAGE_NAME }} || true
+          
+            # 새 컨테이너 실행
+            docker run -d --restart always --name ${{ env.IMAGE_NAME }} -p 8080:8080 ${{ env.IMAGE_TAG }}
+          "
