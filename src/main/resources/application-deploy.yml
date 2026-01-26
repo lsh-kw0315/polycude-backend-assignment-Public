@@ -1,4 +1,7 @@
 spring:
+  cloud:
+    gcp:
+      project-id: aerial-velocity-485514-i8
   config:
     import: "gcp:secretmanager:/"
   jpa:
@@ -13,7 +16,3 @@ spring:
     url: ${sm://db-url}
     username: ${sm://db-username}
     password: ${sm://db-password}
-
-  cloud:
-    gcp:
-      project-id: aerial-velocity-485514-i8
