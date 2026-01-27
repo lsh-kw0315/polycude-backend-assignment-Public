@@ -35,7 +35,7 @@ jobs:
       - name: Decode TrustStore JKS
         run: |
           mkdir -p src/main/resources # truststore.jks가 있어야 할 경로 (빌드 시)
-          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > src/main/resources/truststore.jks
+          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > src/main/resources/truststore.p12
         shell: bash # Windows 러너 사용 시 Powershell 스크립트로 변경
 
       # 3. Gradle 캐싱 설정 (빌드 속도 향상)
