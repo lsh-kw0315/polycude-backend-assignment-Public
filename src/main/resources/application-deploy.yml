@@ -1,13 +1,13 @@
 spring:
   cloud:
     gcp:
-      project-id: ${sm@project-id}
+      project-id: aerial-velocity-485514-i8
       sql:
         # 1. 연결할 DB 이름
-        database-name: ${sm@db-name}
+        database-name: test-db
         # 2. 인스턴스 연결 이름 (GCP 콘솔 -> 개요 에서 복사)
         # 형식: [프로젝트ID]:[리전]:[인스턴스ID]
-        instance-connection-name: ${sm@db-connection-id}
+        instance-connection-name: aerial-velocity-485514-i8:us-east1:test-rdb
         # [핵심 설정] 3. 사설 IP만 사용하여 통신 (SSL 자동 적용됨)
         ip-types: PRIVATE
         enabled: true
