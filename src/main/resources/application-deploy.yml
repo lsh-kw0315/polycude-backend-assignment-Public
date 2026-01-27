@@ -4,7 +4,7 @@ spring:
       project-id: aerial-velocity-485514-i8
       sql:
         # 1. 연결할 DB 이름
-        database-name: test-rdb
+        database-name: mydb
         # 2. 인스턴스 연결 이름 (GCP 콘솔 -> 개요 에서 복사)
         # 형식: [프로젝트ID]:[리전]:[인스턴스ID]
         instance-connection-name: aerial-velocity-485514-i8:us-east1:test-rdb
