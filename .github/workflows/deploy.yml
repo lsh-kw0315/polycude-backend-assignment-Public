@@ -12,6 +12,7 @@ env:
   REPOSITORY: my-repo
   IMAGE_NAME: my-app
   VM_INSTANCE_NAME: ${{ secrets.GCP_VM_NAME }}  # secrets에서 가져와 env에 정의
+  KEYSTORE_PW: ${{secretes.KEYSTORE_PW}}
 
 jobs:
   build-and-deploy:
@@ -80,5 +81,5 @@ jobs:
             docker stop ${{ env.IMAGE_NAME }} || true
             docker rm ${{ env.IMAGE_NAME }} || true
           
-            docker run -d --restart always --name ${{ env.IMAGE_NAME }} -p 8080:8080 ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+            docker run -d --restart always --name ${{ env.IMAGE_NAME }} -e ${{env.KEYSTORE_PW}} -p 8080:8080 ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           "
