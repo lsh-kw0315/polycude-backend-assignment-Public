@@ -36,7 +36,7 @@ COPY --from=builder /workspace/build/libs/*.jar app.jar
 # src/main/resources/truststore.jks 파일은 빌더 스테이지에서 /app/src/main/resources/truststore.jks 에 있었습니다.
 # 이제 이 파일을 최종 이미지의 /app/truststore.jks 로 복사합니다.
 # 이렇게 하면 JAR 파일 외부에 별도로 존재하게 됩니다.
-COPY --from=builder /app/src/main/resources/truststore.jks /app/truststore.jks
+COPY --from=builder /workspace/src/main/resources/truststore.jks /app/truststore.jks
 
 # 컨테이너 실행 시 실행될 명령어 (prod 프로파일 활성화)
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=deploy", "-Djavax.net.ssl.trustStore=/app/truststore.jks","-Djavax.net.ssl.trustStorePassword=${KEYSTORE_PW}" "app.jar"]
