@@ -39,4 +39,4 @@ COPY --from=builder /workspace/build/libs/*.jar app.jar
 COPY --from=builder /workspace/src/main/resources/truststore.jks /app/truststore.jks
 
 # 컨테이너 실행 시 실행될 명령어 (prod 프로파일 활성화)
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=deploy", "-Djavax.net.ssl.trustStore=/app/truststore.jks","-Djavax.net.ssl.trustStorePassword=${KEYSTORE_PW}" "app.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=deploy", "-Djavax.net.ssl.trustStore=/app/truststore.jks","-Djavax.net.ssl.trustStorePassword=${KEYSTORE_PW}", "app.jar"]
