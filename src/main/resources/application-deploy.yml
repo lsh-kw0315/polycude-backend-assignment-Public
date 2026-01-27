@@ -5,13 +5,12 @@ spring:
       sql:
         # 1. 연결할 DB 이름
         database-name: ${sm@db-name}
-
         # 2. 인스턴스 연결 이름 (GCP 콘솔 -> 개요 에서 복사)
         # 형식: [프로젝트ID]:[리전]:[인스턴스ID]
         instance-connection-name: ${sm@db-connection-id}
-
         # [핵심 설정] 3. 사설 IP만 사용하여 통신 (SSL 자동 적용됨)
         ip-types: PRIVATE
+        enabled: true
 
   config:
     import: "sm@"
@@ -24,6 +23,5 @@ spring:
         show_sql: false
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${sm@db-url}
     username: ${sm@db-username}
     password: ${sm@db-password}
