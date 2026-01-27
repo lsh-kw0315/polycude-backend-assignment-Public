@@ -12,7 +12,7 @@ env:
   REPOSITORY: my-repo
   IMAGE_NAME: my-app
   VM_INSTANCE_NAME: ${{ secrets.GCP_VM_NAME }}  # secrets에서 가져와 env에 정의
-  KEYSTORE_PW: ${{secretes.KEYSTORE_PW}}
+  KEYSTORE_PW: ${{secrets.KEYSTORE_PW}}
 
 jobs:
   build-and-deploy:
