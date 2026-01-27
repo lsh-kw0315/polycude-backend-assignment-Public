@@ -1,10 +1,7 @@
 package prac.backendassingment.application.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import prac.backendassingment.application.dto.ProductAddRequest;
 import prac.backendassingment.application.service.ProductService;
 import prac.backendassingment.domain.model.Post;
@@ -16,7 +13,7 @@ public class AdminController {
     private final ProductService productService;
 
     @PostMapping("/products")
-    public Product addProduct(ProductAddRequest request){
+    public Product addProduct(@RequestBody ProductAddRequest request){
         return productService.addNewProduct(request);
     }
 
