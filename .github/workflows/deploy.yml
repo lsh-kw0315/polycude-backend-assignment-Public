@@ -32,12 +32,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Decode TrustStore JKS
-        run: |
-          mkdir -p src/main/resources # truststore.jks가 있어야 할 경로 (빌드 시)
-          echo "${{ secrets.KEYSTORE_FILE }}" | base64 --decode > src/main/resources/truststore.p12
-        shell: bash # Windows 러너 사용 시 Powershell 스크립트로 변경
-
       # 3. Gradle 캐싱 설정 (빌드 속도 향상)
       - name: Cache Gradle packages
         uses: actions/cache@v4
@@ -86,5 +80,5 @@ jobs:
             docker stop ${{ env.IMAGE_NAME }} || true
             docker rm ${{ env.IMAGE_NAME }} || true
           
-            docker run -d --restart always --name ${{ env.IMAGE_NAME }} -e KEYSTORE_PW=${{ secrets.KEYSTORE_PW }} -p 8080:8080 ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+            docker run -d --restart always --name ${{ env.IMAGE_NAME }} -p 8080:8080 ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
           "
