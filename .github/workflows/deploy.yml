@@ -106,7 +106,7 @@ jobs:
       - name: Start Rolling Update
         run: |
           gcloud compute instance-groups managed rolling-action start-update ${{ env.MIG_NAME }} \
-            --version=template=projects/{{ env.GCP_PROJECT_ID }}/regions/${{ env.GAR_LOCATION }}/instanceTemplates/${{ env.TEMPLATE_NAME }} \
+            --version=template=projects/${{ env.GCP_PROJECT_ID }}/regions/${{ env.GAR_LOCATION }}/instanceTemplates/${{ env.TEMPLATE_NAME }} \
             --zone=${{ env.GCP_ZONE }} \
             --max-surge=1 \
             --max-unavailable=0
