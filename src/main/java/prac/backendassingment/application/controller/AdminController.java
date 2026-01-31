@@ -9,6 +9,7 @@ import prac.backendassingment.domain.model.Product;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class AdminController {
     private final ProductService productService;
 
@@ -20,5 +21,10 @@ public class AdminController {
     @GetMapping("/products/{id}")
     public Product getProducts(@PathVariable("id")Long id){
         return productService.findProductById(id);
+    }
+
+    @GetMapping("/hello")
+    public String hello(){
+        return "Hello, World!";
     }
 }
