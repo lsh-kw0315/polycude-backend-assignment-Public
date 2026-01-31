@@ -107,7 +107,6 @@ jobs:
         run: |
           gcloud compute instance-groups managed rolling-action start-update ${{ env.MIG_NAME }} \
             --version=template=${{ env.TEMPLATE_NAME }} \
-            --region=${{ env.GAR_LOCATION }}
             --zone=${{ env.GCP_ZONE }} \
             --max-surge=1 \
             --max-unavailable=0
