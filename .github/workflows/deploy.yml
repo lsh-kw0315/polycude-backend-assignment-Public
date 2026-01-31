@@ -92,6 +92,7 @@ jobs:
             --boot-disk-size=30GB \
             --image-family=cos-stable \
             --image-project=cos-cloud \
+            --region = ${{ env.GAR_LOCATION }}
             --instance-template-region=${{ env.GAR_LOCATION }}  \
             --network-interface=network=myvpc,subnet=testsubnet,no-address \
             --tags=was \
@@ -105,7 +106,7 @@ jobs:
       - name: Start Rolling Update
         run: |
           gcloud compute instance-groups managed rolling-action start-update ${{ env.MIG_NAME }} \
-            --version=template=${{ env.TEMPLATE_NAME }} \
+            --version=template=projects/{{ env.GCP_PROJECT_ID }}/regions/${{ env.GAR_LOCATION }}/instanceTemplates/${{ env.TEMPLATE_NAME }} \
             --zone=${{ env.GCP_ZONE }} \
             --max-surge=1 \
             --max-unavailable=0
