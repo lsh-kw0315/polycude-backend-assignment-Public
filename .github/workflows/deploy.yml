@@ -88,7 +88,7 @@ jobs:
           gcloud compute instance-templates create $TEMPLATE_NAME \
             --project=${{ env.GCP_PROJECT_ID }} \
             --machine-type=e2-micro \
-            --boot-disk-device-name=pd-standard \
+            --boot-disk-type=pd-standard \
             --boot-disk-size=30GB \
             --image-family=cos-stable \
             --image-project=cos-cloud \
