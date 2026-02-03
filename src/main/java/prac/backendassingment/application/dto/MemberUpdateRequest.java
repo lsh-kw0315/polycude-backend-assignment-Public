@@ -10,6 +10,8 @@ import prac.backendassingment.global.enums.MemberRank;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberUpdateRequest {
-    Long id;
-    MemberRank rank;
+    private Long id;
+    private String username;
+    private String password;
+    private String profileUrl;
 }

@@ -1,4 +1,5 @@
 package prac.backendassingment.global.enums;
 
-public class MemberRole {
+public enum MemberRole {
+    USER, ADMIN
 }

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import prac.backendassingment.application.dto.*;
 import prac.backendassingment.application.service.*;
 import prac.backendassingment.domain.model.*;
@@ -19,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
-@Profile("default")
 public class JpaTest {
     @Autowired
     private DiscountService discountService;
@@ -34,21 +35,23 @@ public class JpaTest {
 
     @Test
     @Rollback
+    @Transactional
     public void testMember(){
-        Member member1 = memberService.joinMember(new MemberJoinRequest(MemberRank.NORMAL));
+        Member member1 = memberService.joinMember(new MemberJoinRequest(MemberRank.NORMAL, "a1","1234", "user1",  null));
         Member find = memberService.findMemberById(member1.getId());
 
         Assertions.assertThat(find).isEqualTo(member1);
 
         //=====================
 
-        Member modified = memberService.modifyMember(new MemberUpdateRequest(member1.getId(), MemberRank.VVIP));
+        Member modified = memberService.modifyMember(new MemberUpdateRequest(find.getId(), "changeme", null, null ));
 
-        Assertions.assertThat(modified.getRank()).isEqualTo(MemberRank.VVIP);
+        Assertions.assertThat(modified.getUsername()).isEqualTo("changeme");
     }
 
     @Test
     @Rollback
+    @Transactional
     public void testDiscount(){
         DiscountCondition condition1 = new DiscountCondition(DiscountReason.MEMBER_RANK, MemberRank.VIP.name());
         DiscountCondition condition2 = new DiscountCondition(DiscountReason.MEMBER_RANK, MemberRank.VVIP.name());
@@ -120,6 +123,7 @@ public class JpaTest {
 
     @Test
     @Rollback
+    @Transactional
     public void testProduct(){
         ProductAddRequest productAddRequest1 = new ProductAddRequest("상품1", 1000L, 15L);
         Product product1 = productService.addNewProduct(productAddRequest1);
@@ -153,6 +157,7 @@ public class JpaTest {
 
     @Test
     @Rollback
+    @Transactional
     public void testOrder(){
         ProductAddRequest productAddRequest1 = new ProductAddRequest("상품1", 1000L, 15L);
         Product product1 = productService.addNewProduct(productAddRequest1);
@@ -164,7 +169,7 @@ public class JpaTest {
         Product saved2 = productService.findProductById(product2.getId());
 
         //================
-        Member member1 = memberService.joinMember(new MemberJoinRequest(MemberRank.NORMAL));
+        Member member1 = memberService.joinMember(new MemberJoinRequest(MemberRank.NORMAL,"a1","1234", "user1",  null));
         List<OrderItem> orderItems = List.of(
                 new OrderItem(saved1.getId(), saved1.getName(),5L, saved1.getPrice()),
                 new OrderItem(saved2.getId(), saved2.getName(),5L, saved2.getPrice())
@@ -189,6 +194,7 @@ public class JpaTest {
 
     @Test
     @Rollback
+    @Transactional
     public void testPayment(){
         ProductAddRequest productAddRequest1 = new ProductAddRequest("상품1", 1000L, 15L);
         Product product1 = productService.addNewProduct(productAddRequest1);
@@ -215,8 +221,8 @@ public class JpaTest {
         );
 
         //================
-        Member member1 = memberService.joinMember(new MemberJoinRequest(MemberRank.VIP));
-        Member member2 = memberService.joinMember(new MemberJoinRequest(MemberRank.VVIP));
+        Member member1 = memberService.joinMember(new MemberJoinRequest(MemberRank.VIP,"a1","1234", "user1",  null));
+        Member member2 = memberService.joinMember(new MemberJoinRequest(MemberRank.VVIP,"a2","1234", "user2",  null));
 
         List<OrderItem> orderItems1 = List.of(
                 new OrderItem(product1.getId(), product1.getName(),5L, product1.getPrice()),
@@ -259,6 +265,7 @@ public class JpaTest {
 
     @Test
     @Rollback
+    @Transactional
     public void 정책변경_삭제_테스트(){
         ProductAddRequest productAddRequest1 = new ProductAddRequest("상품1", 1000L, 15L);
         Product product1 = productService.addNewProduct(productAddRequest1);
@@ -294,8 +301,8 @@ public class JpaTest {
         );
 
         //================
-        Member member1 = memberService.joinMember(new MemberJoinRequest(MemberRank.VIP));
-        Member member2 = memberService.joinMember(new MemberJoinRequest(MemberRank.VVIP));
+        Member member1 = memberService.joinMember(new MemberJoinRequest(MemberRank.VIP, "a1","1234", "user1",  null));
+        Member member2 = memberService.joinMember(new MemberJoinRequest(MemberRank.VVIP, "a2","1234", "user2",  null));
 
         List<OrderItem> orderItems1 = List.of(
                 new OrderItem(product1.getId(), product1.getName(),5L, product1.getPrice()),

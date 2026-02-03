@@ -14,10 +14,8 @@ import prac.backendassingment.application.util.PaymentMethodConditionProvider;
 import prac.backendassingment.domain.model.*;
 import prac.backendassingment.domain.repository.DiscountRepository;
 import prac.backendassingment.domain.service.DiscountCalculatorService;
-import prac.backendassingment.global.enums.DiscountMethod;
-import prac.backendassingment.global.enums.DiscountReason;
-import prac.backendassingment.global.enums.MemberRank;
-import prac.backendassingment.global.enums.PaymentMethod;
+import prac.backendassingment.global.enums.*;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,9 +46,9 @@ public class DiscountTest {
     @Test
     public void checkMemberRankDiscount() {
         //given
-        Member member1 = new Member(1L, MemberRank.NORMAL);
-        Member member2 = new Member(2L, MemberRank.VIP);
-        Member member3 = new Member(3L, MemberRank.VVIP);
+        Member member1 = new Member(1L, MemberRank.NORMAL, "a1", "1234", "user1" , MemberRole.USER, null);
+        Member member2 = new Member(2L, MemberRank.VIP,"a2", "1234", "user2" , MemberRole.USER, null);
+        Member member3 = new Member(3L, MemberRank.VVIP,"a3", "1234", "user3" , MemberRole.USER, null);
 
         Product product = new Product(1L, "apple", 1000L, 15L);
 
@@ -108,7 +106,7 @@ public class DiscountTest {
 
     @Test
     public void 일반회원과_포인트() {
-        Member member1 = new Member(1L, MemberRank.NORMAL);
+        Member member1 = new Member(1L, MemberRank.NORMAL,"a1", "1234", "user1" , MemberRole.USER, null);
         Product product = new Product(1L, "apple", 1000L, 15L);
 
         DiscountPolicy vipPolicy = new DiscountPolicy(DiscountMethod.FIXED, new BigDecimal(1000));
@@ -147,7 +145,7 @@ public class DiscountTest {
     @Test
     public void VIP와_포인트() {
 
-        Member member1 = new Member(1L, MemberRank.VIP);
+        Member member1 = new Member(1L, MemberRank.VIP,"a1", "1234", "user1" , MemberRole.USER, null);
         Product product = new Product(1L, "apple", 1000L, 15L);
 
         DiscountPolicy vipPolicy = new DiscountPolicy(DiscountMethod.FIXED, new BigDecimal(1000));
@@ -207,7 +205,7 @@ public class DiscountTest {
 
     @Test
     public void VVIP와_포인트() {
-        Member member1 = new Member(1L, MemberRank.VVIP);
+        Member member1 = new Member(1L, MemberRank.VVIP,"a1", "1234", "user1" , MemberRole.USER, null);
         Product product = new Product(1L, "apple", 1000L, 15L);
 
         DiscountPolicy vipPolicy = new DiscountPolicy(DiscountMethod.FIXED, new BigDecimal(1000));

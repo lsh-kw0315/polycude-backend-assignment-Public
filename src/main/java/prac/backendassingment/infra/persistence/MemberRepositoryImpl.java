@@ -16,15 +16,11 @@ public class MemberRepositoryImpl implements MemberRepository {
 
     @Override
     public Member create(Member member) {
-        if(member.getId() == null){
-            MemberEntity saved = memberJpaRepository.save(toEntity(member));
-            return toDomain(saved);
-        }
-
-        MemberEntity target = memberJpaRepository.findById(member.getId()).orElseThrow(()->new IllegalArgumentException("유저가 존재하지 않습니다."));
-        target.changeRank(member.getRank());
-        return toDomain(target);
+        MemberEntity saved = memberJpaRepository.save(toEntity(member));
+        return toDomain(saved);
     }
+
+
 
     @Override
     public Optional<Member> findById(Long id) {
@@ -32,17 +28,50 @@ public class MemberRepositoryImpl implements MemberRepository {
         return member.map(this::toDomain);
     }
 
+    @Override
+    public Optional<Member> findByLoginId(String loginId) {
+        Optional<MemberEntity> member = memberJpaRepository.findByLoginId(loginId);
+        return member.map(this::toDomain);
+    }
+
+    @Override
+    public Optional<Member> findByUsername(String username) {
+        Optional<MemberEntity> member = memberJpaRepository.findByUsername(username);
+        return member.map(this::toDomain);
+    }
+
+    @Override
+    public Member changeMember(Member member) {
+        MemberEntity target = memberJpaRepository.findById(member.getId()).orElseThrow(()->new IllegalArgumentException("유저가 존재하지 않습니다."));
+        target.changeRank(member.getRank());
+        target.changeProfile(member.getProfileUrl());
+        target.changeUsername(member.getUsername());
+        target.changePassword(member.getEncodedPassword());
+        return toDomain(target);
+    }
+
     private Member toDomain(MemberEntity memberEntity){
         return new Member(
                 memberEntity.getId(),
-                memberEntity.getRank()
+                memberEntity.getRank(),
+                memberEntity.getLoginId(),
+                memberEntity.getPassword(),
+                memberEntity.getUsername(),
+                memberEntity.getMemberRole(),
+                memberEntity.getProfileUrl()
         );
     }
+
 
     private MemberEntity toEntity(Member member){
         return new MemberEntity(
                 member.getId(),
-                member.getRank()
+                member.getRank(),
+                member.getLoginId(),
+                member.getEncodedPassword(),
+                member.getUsername(),
+                member.getMemberRole(),
+                member.getProfileUrl()
         );
     }
 

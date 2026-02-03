@@ -1,0 +1,41 @@
+spring:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+    open-in-view: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: # 패스워드가 없으면 비워둠
+      database: 0 # 사용할 Redis 데이터베이스 번호 (기본 0)
+      timeout: 3000ms # 연결 타임아웃
+#    mongodb:
+#      uri: mongodb://root:1234@localhost:27017/chat
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:~/assignment
+    username: sa
+    password:
+  cloud:
+    gcp:
+      sql:
+        enabled: false
+      config:
+        enabled: false
+
+cookie:
+  secure: false
+  domain: ""
+security:
+  allowed-origin: "*"
+jwt:
+  access-token-expire: 1800000
+  refresh-token-expire: 1209600000

@@ -4,13 +4,11 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import prac.backendassingment.global.enums.MemberRank;
+
 @AllArgsConstructor
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberJoinRequest {
+public class LoginRequest {
     private String loginId;
     private String password;
-    private String username;
-    private String profileUrl;
 }

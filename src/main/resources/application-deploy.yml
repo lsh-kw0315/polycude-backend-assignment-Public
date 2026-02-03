@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    include: secret # 기본 프로파일 실행 시 secret도 같이 읽어라
   cloud:
     gcp:
       project-id: aerial-velocity-485514-i8
@@ -25,3 +27,29 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: ${sm@db-username}
     password: ${sm@db-password}
+  data:
+    redis:
+      host: ${sm@redis-host}
+      port: 6378
+      ssl:
+        enabled: true
+        bundle: cloud-memorystore
+      password: ${sm@redis-password}
+  ssl:
+    bundle:
+      pem:
+        cloud-memorystore:
+          truststore:
+            certificate: "server-ca.pem"
+  h2:
+    console:
+      enabled: false
+cookie:
+  secure: true
+  domain: ""
+security:
+  allowed-origin: "*"
+jwt:
+  key: ${sm@jwt-key}
+  access-token-expire: ${sm@accessotken-expire}
+  refresh-token-expire: ${sm@refreshtoken-expire}
