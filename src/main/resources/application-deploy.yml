@@ -38,7 +38,7 @@ spring:
       pem:
         cloud-memorystore:
           truststore:
-            certificate: "server-ca.pem"
+            certificate: classpath:redis/server-ca.pem
   h2:
     console:
       enabled: false
