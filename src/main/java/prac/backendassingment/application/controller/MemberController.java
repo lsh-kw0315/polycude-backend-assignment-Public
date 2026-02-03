@@ -98,7 +98,7 @@ public class MemberController {
     public ResponseEntity<LoginResponse> refresh(HttpServletRequest request, HttpServletResponse response){
         Cookie[] cookies = request.getCookies();
         if(cookies == null){
-            return null;
+            return ResponseEntity.internalServerError().body(new LoginResponse("쿠키가 없음"));
         }
 
         Optional<Cookie> optional =  Arrays.stream(cookies)
@@ -106,13 +106,13 @@ public class MemberController {
                 .findFirst();
 
         if(optional.isEmpty()){
-            return ResponseEntity.internalServerError().body(new LoginResponse(null));
+            return ResponseEntity.internalServerError().body(new LoginResponse("리프레시 토큰이 쿠키에 없음"));
         }
 
         String refreshToken = optional.get().getValue();
 
         if(!jwtTokenUtil.isTokenValid(refreshToken)) {
-            return ResponseEntity.internalServerError().body(new LoginResponse(null));
+            return ResponseEntity.internalServerError().body(new LoginResponse("리프레시 토큰이 유효하지 않음"));
         }
 
         Claims jwtClaim = jwtTokenUtil.getClaims(refreshToken);
@@ -121,7 +121,7 @@ public class MemberController {
 
         if(!refreshToken.equals(saved)){
             redisTokenUtil.deleteRefreshToken(id);
-            return ResponseEntity.internalServerError().body(new LoginResponse(null));
+            return ResponseEntity.internalServerError().body(new LoginResponse("서버의 리프레시 토큰과 제시된 리프레시 토큰이 다름"));
         }
 
         Member member = memberService.findMemberById(id);
