@@ -140,6 +140,7 @@ public class MemberController {
     private void addRefreshTokenToCookie(HttpServletResponse response, String newRefreshToken) {
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken)
                 .httpOnly(true)
+                .secure(isSecure)
                 .sameSite(isSecure ? "None" : "Lax") // Secure가 true일 때만 None 허용
                 .path("/") //쿠키를 보내는 경로
                 .domain(domain != null && !domain.isEmpty() ? domain : null) // 쿠키를 보내는 URL
