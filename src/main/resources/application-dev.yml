@@ -33,7 +33,7 @@ spring:
 
 cookie:
   secure: false
-  domain: ""
+  domain: "localhost"
 security:
   allowed-origin: "*"
 jwt:

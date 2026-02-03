@@ -67,6 +67,7 @@ public class MemberController {
 
     @PostMapping("/api/logout")
     public ResponseEntity logout(HttpServletRequest request, HttpServletResponse response){
+        removeRefreshTokenToCookie(response);
 
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
@@ -83,7 +84,6 @@ public class MemberController {
 
         String refreshToken = optional.get().getValue();
 
-        removeRefreshTokenToCookie(response);
 
         if(jwtTokenUtil.isTokenValid(refreshToken)) {
             Claims jwtClaim = jwtTokenUtil.getClaims(refreshToken);
@@ -139,10 +139,10 @@ public class MemberController {
 
     private void addRefreshTokenToCookie(HttpServletResponse response, String newRefreshToken) {
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, newRefreshToken)
-                .sameSite("None")
                 .httpOnly(true)
-                .secure(isSecure)
-                .domain(domain)
+                .sameSite(isSecure ? "None" : "Lax") // Secure가 true일 때만 None 허용
+                .path("/") //쿠키를 보내는 경로
+                .domain(domain != null && !domain.isEmpty() ? domain : null) // 쿠키를 보내는 URL
                 .maxAge(REFRESH_TOKEN_EXPIRE/1000)
                 .build();
 
@@ -152,10 +152,11 @@ public class MemberController {
     private void removeRefreshTokenToCookie(HttpServletResponse response){
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, "")
                 .httpOnly(true)
-                .path("/")
+                .path("/") //쿠키를 보내는 경로
                 .maxAge(0)
-                .domain(domain)
-                .sameSite("None")
+                .secure(isSecure) // 쿠키를 보내는 URL
+                .domain(domain != null && !domain.isEmpty() ? domain : null)
+                .sameSite(isSecure ? "None" : "Lax") // Secure가 true일 때만 None 허용
                 .build();
 
         response.addHeader("Set-Cookie", cookie.toString());
