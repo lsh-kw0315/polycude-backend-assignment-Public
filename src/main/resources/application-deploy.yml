@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    include: secret # 기본 프로파일 실행 시 secret도 같이 읽어라
   cloud:
     gcp:
       project-id: aerial-velocity-485514-i8
