@@ -24,7 +24,7 @@ public class RedisConfig {
 
         // 일괄 적용
         template.setKeySerializer(stringSerializer);
-        template.setValueSerializer(jsonSerializer);
+        template.setValueSerializer(stringSerializer);
         template.setHashKeySerializer(stringSerializer);
         template.setHashValueSerializer(jsonSerializer);
 
