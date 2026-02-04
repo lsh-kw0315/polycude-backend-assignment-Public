@@ -60,6 +60,8 @@ public class MemberController {
 
         redisTokenUtil.saveRefreshToken(member.getId(), refreshToken);
 
+        System.out.println("Saved Refresh Token: "+refreshToken);
+
         addRefreshTokenToCookie(response, refreshToken);
 
         return ResponseEntity.ok(new LoginResponse(accessToken));
@@ -118,6 +120,9 @@ public class MemberController {
         Claims jwtClaim = jwtTokenUtil.getClaims(refreshToken);
         Long id = Long.parseLong(jwtClaim.getSubject());
         String saved = redisTokenUtil.getRefreshToken(id);
+
+        System.out.println("Cookie Refresh Token: "+ refreshToken);
+        System.out.println("Redis Refresh Token: "+saved);
 
         if(!refreshToken.equals(saved)){
             redisTokenUtil.deleteRefreshToken(id);
