@@ -6,3 +6,8 @@ jwt:
   key: ${JWT_KEY:c2VjcmV0LWtleS1mb3Itand0LXNpZ25pbmctYW5kLXZlcmlmeWluZw==}
   access-token-expire: 1800000
   refresh-token-expire: 1209600000
+
+logging:
+  level:
+    org.springframework.data.redis: DEBUG
+    io.lettuce.core: DEBUG  # Redis 클라이언트 라이브러리 상세 로그
