@@ -20,7 +20,7 @@ public class RedisTokenUtil {
                REFRESH_KEY+id,
                refreshToken,
                REFRESH_EXPIRE,
-               TimeUnit.MICROSECONDS
+               TimeUnit.MILLISECONDS
        );
     }
 

@@ -1,7 +1,8 @@
 spring:
   profiles:
     active: dev
-
+  jpa:
+    open-in-view: false
 jwt:
   key: ${JWT_KEY:c2VjcmV0LWtleS1mb3Itand0LXNpZ25pbmctYW5kLXZlcmlmeWluZw==}
   access-token-expire: 1800000
