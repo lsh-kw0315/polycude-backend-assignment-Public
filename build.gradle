@@ -51,6 +51,11 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0' // JSON 처리를 위해 필요
 
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    testImplementation "org.springframework.boot:spring-boot-testcontainers"
+    testImplementation "org.testcontainers:mongodb"
+    // Redis용 (GenericContainer를 사용하거나 아래 전용 라이브러리 사용)
+    testImplementation "org.testcontainers:junit-jupiter"
 }
 
 tasks.named('test') {
