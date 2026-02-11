@@ -41,7 +41,7 @@ dependencies {
     implementation 'com.google.cloud:spring-cloud-gcp-starter-secretmanager'
     implementation 'com.google.cloud:spring-cloud-gcp-starter-sql-postgresql'
 
-//    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
     implementation 'org.springframework.boot:spring-boot-starter-security'

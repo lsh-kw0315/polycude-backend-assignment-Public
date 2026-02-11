@@ -12,3 +12,5 @@ logging:
   level:
     org.springframework.data.redis: DEBUG
     io.lettuce.core: DEBUG  # Redis 클라이언트 라이브러리 상세 로그
+    org.springframework.web.socket: DEBUG
+    org.springframework.messaging: DEBUG

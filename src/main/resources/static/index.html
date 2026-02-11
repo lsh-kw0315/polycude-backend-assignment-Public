@@ -1,0 +1,420 @@
+<!-- src/main/resources/static/index.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>Chat with WebSocket and RabbitMQ</title>
+    <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@5.0.0/bundles/stomp.umd.min.js"></script>
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="text-center">Lion Chat</h2>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div id="login-form">
+                <div class="form-group">
+                    <label for="username">Access Token:</label>
+                    <input
+                            type="text"
+                            id="username"
+                            class="form-control"
+                            placeholder="Enter your name"
+                    />
+                    <label for="userId">User ID:</label>
+                    <input
+                            type="text"
+                            id="userId"
+                            class="form-control"
+                            placeholder="Enter your Id"
+                    />
+                    <button id="login-btn" class="btn btn-primary">Login</button>
+                </div>
+            </div>
+            <div id="chat-room-list-form" class="d-none">
+                <div>
+                    <label for="chatroom-name">ChatRoom Name:</label>
+                    <input type="text" id="chatroom-name" placeholder="채팅방 이름">
+                <button id="create-btn" class="btn btn-primary">Create</button>
+                </div>
+                <ul
+                        id="chatroomlist"
+                        class="border p-3 mb-3"
+                        style="height: 300px; overflow-y: scroll"
+                ></ul>
+            </div>
+            <div id="chat-room" class="d-none">
+                <div
+                        id="messages"
+                        class="border p-3 mb-3"
+                        style="height: 300px; overflow-y: scroll"
+                ></div>
+                <form id="message-form" class="form-inline">
+                    <input
+                            type="text"
+                            id="message"
+                            class="form-control flex-grow-1 mr-2"
+                            placeholder="Type a message..."
+                    />
+                    <button type="submit" class="btn btn-success">Send</button>
+                </form>
+                <button type="button" id="load" class="btn btn-secondary mt-2">
+                    Load Old Messages
+                </button>
+                <button type="button" id="back" class="btn btn-secondary">
+                    Back to List
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let stompClient = null;
+    let token = null;
+    let lastPage = 0;
+    let subscription = null;
+    let alarmSubscription = null;
+    let userId = 0;
+    const createBtn = document.getElementById("create-btn");
+    const chatRoomNameInput = document.getElementById("chatroom-name")
+    const loginBtn = document.getElementById("login-btn");
+    const loginForm = document.getElementById("login-form");
+    const chatRoom = document.getElementById("chat-room");
+    const chatRoomListForm = document.getElementById("chat-room-list-form");
+    const chatRoomList = document.getElementById("chatroomlist");
+    const messageForm = document.getElementById("message-form");
+    const messageInput = document.getElementById("message");
+    const messagesArea = document.getElementById("messages");
+    const usernameInput = document.getElementById("username");
+    const userIdInput = document.getElementById("userId");
+    const loadBtn = document.getElementById("load");
+    const backBtn = document.getElementById("back");
+    const MAX_TIME_INTERVAL = 5000;
+
+    const MAX_RETRIES = 5;
+    let retryCount = 0;
+
+    messageForm.addEventListener("submit", sendMessage);
+    createBtn.addEventListener("click", create)
+    loadBtn.addEventListener("click", fetchOldMessage);
+    loginBtn.addEventListener("click", login);
+    backBtn.addEventListener("click", backToList);
+
+    let chatRoomId = 0;
+
+    function unsubscribe() {
+        if (subscription) {
+            subscription.unsubscribe();
+            subscription = null;
+        }
+
+    }
+
+    function alarmUnsubscribe(){
+        if(alarmSubscription){
+            alarmSubscription.unsubscribe();
+            alarmSubscription = null;
+        }
+    }
+
+    function configWebSocket() {
+        stompClient = new StompJs.Client({
+            webSocketFactory: () => new SockJS("/ws/chat"),
+            connectHeaders: {
+                Authorization: `Bearer ${token}`,
+            },
+            headers:{
+                "Authorization": `Bearer ${token}`,
+            },
+            heartbeatIncoming: 12000,
+            heartbeatOutgoing: 12000,
+            reconnectDelay: Math.random() * MAX_TIME_INTERVAL,
+            onConnect: onConnected,
+            onStompError: (frame) => {
+                console.error("Broker reported error: " + frame.headers["message"]);
+                console.error("Additional details: " + frame.body);
+                displayMessage({
+                    senderName: "System",
+                    content:
+                        "Could not connect to WebSocket server. Please refresh this page to try again!",
+                });
+            },
+            onWebSocketClose: (event) => {
+                console.log("WebSocket connection closed: ", event);
+
+                if (event.code === 1000) {
+                    console.log("WebSocket closed normally.");
+                } else {
+                    console.error("WebSocket closed with error code: ", event.code);
+                    retryCount += 1;
+
+                    if (retryCount > MAX_RETRIES) {
+                        console.log(
+                            "Max retries reached. Stopping reconnection attempts."
+                        );
+                        stompClient.deactivate();
+                    }
+                }
+            },
+            onDisConnect: (frame) => {
+                console.log("STOMP client disconnected: ", frame);
+            },
+        });
+
+        stompClient.activate();
+    }
+
+    function alarmReceived(payload){
+        const msg = JSON.parse(payload.body);
+        console.log(msg)
+    }
+
+    async function login(event) {
+        event.preventDefault();
+        token = usernameInput.value.trim();
+        userId = userIdInput.value.trim();
+        if (token) {
+            configWebSocket();
+
+            loginForm.classList.add("d-none");
+            chatRoomListForm.classList.remove("d-none");
+
+            const res = await fetch("/api/chat/rooms", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            const body = await res.json();
+
+            body.forEach((chatRoom) => {
+                const listItem = document.createElement("li");
+                listItem.textContent = `Chat Room ID: ${chatRoom.id} - 참여자 목록: ${chatRoom.memberIds} - 방 이름:${chatRoom.name}`;
+                listItem.addEventListener("click", () => {
+                    joinTheRoom(event, chatRoom.id);
+                });
+                chatRoomList.appendChild(listItem);
+            });
+        }
+    }
+
+    async function create(event) {
+        event.preventDefault();
+        const chatRoomName = chatRoomNameInput.value.trim();
+        if (chatRoomName) {
+            chatRoomListForm.classList.add("d-none");
+            chatRoom.classList.remove("d-none");
+
+            messagesArea.replaceChildren();
+
+            const res = await fetch("/api/chat/rooms", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ name: chatRoomName }),
+            });
+
+            const body = await res.json();
+            console.log(body);
+            chatRoomId = body.id;
+
+            subscription = stompClient.subscribe(
+                `/sub/chat/room/${chatRoomId}`,
+                onMessageReceived
+            );
+
+            const result = await fetch("/api/chat/room/messages/" + chatRoomId, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const chats = await result.json();
+            if (chats.length > 0) {
+                lastPage++;
+            }
+            chats.forEach((message) => {
+                displayMessage(message);
+            });
+        }
+    }
+
+    async function backToList(event) {
+        event.preventDefault();
+
+        chatRoomListForm.classList.remove("d-none");
+        chatRoom.classList.add("d-none");
+
+        unsubscribe();
+
+        chatRoomList.replaceChildren();
+        chatRoomId = 0;
+        lastPage = 0;
+
+        const res = await fetch("/api/chat/rooms", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const body = await res.json();
+
+        body.forEach((chatRoom) => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `Chat Room ID: ${chatRoom.id} - 참여자 목록: ${chatRoom.memberIds} - 방 이름:${chatRoom.name}`;
+            listItem.addEventListener("click", () => {
+                joinTheRoom(event, chatRoom.id);
+            });
+            chatRoomList.appendChild(listItem);
+        });
+    }
+
+    async function joinTheRoom(event, roomId) {
+        event.preventDefault();
+
+        chatRoomListForm.classList.add("d-none");
+        chatRoom.classList.remove("d-none");
+
+        messagesArea.replaceChildren();
+
+        chatRoomId = roomId;
+
+        console.log(roomId);
+        console.log(chatRoomId)
+
+        subscription = stompClient.subscribe(
+            `/sub/chat/room/${chatRoomId}`,
+            onMessageReceived
+        );
+
+        await fetch("/api/chat/rooms/" + chatRoomId+"/join", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const result = await fetch("/api/chat/room/messages/" + chatRoomId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const chats = await result.json();
+        if (chats.length > 0) {
+            lastPage++;
+        }
+
+        console.log(lastPage);
+
+        chats.reverse();
+
+        chats.forEach((message) => {
+            displayMessage(message);
+        });
+    }
+
+    function onConnected() {
+        console.log("WebSocket connected successfully!");
+        // If there was a subscription before disconnection, re-subscribe
+
+        retryCount = 0;
+
+        console.log("chat Room ID:", chatRoomId);
+        console.log("subscription:", subscription);
+
+        if (subscription) {
+            unsubscribe();
+            subscription = stompClient.subscribe(
+                `/sub/chat/room/${chatRoomId}`,
+                onMessageReceived
+            );
+        }
+
+        alarmUnsubscribe();
+    }
+
+    function sendMessage(event) {
+        event.preventDefault();
+        const messageContent = messageInput.value.trim();
+        if (messageContent && stompClient && stompClient.active) {
+            stompClient.publish({
+                destination: "/pub/chat/message/"+chatRoomId,
+                body: messageContent,
+            });
+            messageInput.value = "";
+        }
+    }
+
+    async function fetchOldMessage() {
+        if (lastPage>0) {
+            const result = await fetch(
+                "/api/chat/room/messages/" + chatRoomId + "?page=" + lastPage,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+
+            const body = await result.json();
+            if (body.length > 0) {
+                lastPage++;
+                body.forEach((message) => {
+                    stackMessage(message);
+                });
+            }
+        }
+    }
+
+    function onMessageReceived(payload) {
+        const message = JSON.parse(payload.body);
+        displayMessage(message);
+        console.log(message);
+        if (message.id === 0) {
+            console.log("떤냐");
+            stompClient.publish({
+                destination: "/app/message.ack",
+                headers: { Authorization: `Bearer ${token}` },
+                body: JSON.stringify({
+                    messageId: message.messageId,
+                    id: message.id
+                }),
+            });
+        }
+    }
+
+    function displayMessage(message) {
+        const messageElement = document.createElement("div");
+        messageElement.innerHTML = `<strong>[${message.senderUsername}]</strong>: ${message.message}`;
+        messagesArea.appendChild(messageElement);
+        messagesArea.scrollTop = messagesArea.scrollHeight; // Auto-scroll
+    }
+
+    function stackMessage(message) {
+        const messageElement = document.createElement("div");
+        messageElement.innerHTML = `<strong>[${message.senderUsername}]</strong>: ${message.message}`;
+        messagesArea.insertBefore(messageElement, messagesArea.firstChild);
+        messagesArea.scrollTop = 0; // Auto-scroll to top
+    }
+</script>
+</body>
+</html>

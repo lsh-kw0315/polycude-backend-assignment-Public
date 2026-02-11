@@ -49,7 +49,9 @@ public class SecurityConfig {
                                 "/api/join",
                                 "/api/login",
                                 "/api/logout",
-                                "/api/refresh"
+                                "/api/refresh",
+                                "/ws/**",
+                                "/index.html"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.GET, "/api/products/**"
@@ -75,7 +77,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of(allowedOrigin));
+        config.setAllowedOriginPatterns(List.of(allowedOrigin));
         config.setAllowedMethods((Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT", "PATCH", "OPTION")));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         config.setAllowCredentials(true); // 쿠키 허용

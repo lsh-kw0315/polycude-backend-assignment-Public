@@ -5,7 +5,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true
@@ -16,11 +16,11 @@ spring:
       password: # 패스워드가 없으면 비워둠
       database: 0 # 사용할 Redis 데이터베이스 번호 (기본 0)
       timeout: 3000ms # 연결 타임아웃
-#    mongodb:
-#      uri: mongodb://root:1234@localhost:27017/chat
+    mongodb:
+      uri: mongodb://root:1234@localhost:27017/chat?authSource=admin
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:file:~/assignment
+    url: jdbc:h2:file:~/assignment;AUTO_SERVER=TRUE
     username: sa
     password:
   cloud:

@@ -32,12 +32,15 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 || path.startsWith("/api/login")
                 || path.startsWith("/api/refresh")
                 || path.startsWith("/api/hello")
-                || (path.startsWith("/api/products") && method.equals("GET"));
+                || (path.startsWith("/api/products") && method.equals("GET"))
+                || path.startsWith("/ws")
+                || path.startsWith( "/index.html");
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = jwtTokenUtil.getJwtFromHeader(request);
+
 
         //토큰 자체가 비어있다면
         if (!StringUtils.hasText(token)) {

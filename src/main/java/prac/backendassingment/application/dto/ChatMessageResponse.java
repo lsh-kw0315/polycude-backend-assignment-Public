@@ -1,15 +1,16 @@
-package prac.backendassingment.domain.model;
+package prac.backendassingment.application.dto;
 
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
-public class ChatMessage {
-    private String id; // For MongoDB ObjectId
+public class ChatMessageResponse {
+    private String id;
     private Long chatRoomId;
     private Long senderId;
     private String senderUsername;

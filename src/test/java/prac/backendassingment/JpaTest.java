@@ -40,7 +40,7 @@ public class JpaTest {
     @Rollback
     @Transactional
     public void testMember(){
-        Member member1 = memberService.joinMember(new MemberJoinRequest("a1","1234", "user1",  null));
+        Member member1 = memberService.joinMember(new MemberJoinRequest("a1","1234", "a1",  null));
         Member find = memberService.findMemberById(member1.getId());
 
         Assertions.assertThat(find).isEqualTo(member1);
@@ -172,7 +172,7 @@ public class JpaTest {
         Product saved2 = productService.findProductById(product2.getId());
 
         //================
-        Member member1 = memberService.joinMember(new MemberJoinRequest("a1","1234", "user1",  null));
+        Member member1 = memberService.joinMember(new MemberJoinRequest("a1","1234", "a1",  null));
         List<OrderItem> orderItems = List.of(
                 new OrderItem(saved1.getId(), saved1.getName(),5L, saved1.getPrice()),
                 new OrderItem(saved2.getId(), saved2.getName(),5L, saved2.getPrice())
@@ -224,8 +224,8 @@ public class JpaTest {
         );
 
         //================
-        Member member1 = memberService.joinMember(new MemberJoinRequest("a1","1234", "user1",  null));
-        Member member2 = memberService.joinMember(new MemberJoinRequest("a2","1234", "user2",  null));
+        Member member1 = memberService.joinMember(new MemberJoinRequest("a1","1234", "a1",  null));
+        Member member2 = memberService.joinMember(new MemberJoinRequest("a2","1234", "a2",  null));
         member1.changeRank(MemberRank.VIP);
         member2.changeRank(MemberRank.VVIP);
 
@@ -309,8 +309,8 @@ public class JpaTest {
         );
 
         //================
-        Member member1 = memberService.joinMember(new MemberJoinRequest("a1","1234", "user1",  null));
-        Member member2 = memberService.joinMember(new MemberJoinRequest("a2","1234", "user2",  null));
+        Member member1 = memberService.joinMember(new MemberJoinRequest("a1","1234", "a1",  null));
+        Member member2 = memberService.joinMember(new MemberJoinRequest("a2","1234", "a2",  null));
 
         member1.changeRank(MemberRank.VIP);
         member2.changeRank(MemberRank.NORMAL);

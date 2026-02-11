@@ -1,0 +1,7 @@
+package prac.backendassingment.infra.persistence.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import prac.backendassingment.infra.persistence.entity.ChatRoomEntity;
+
+public interface ChatRoomJpaRepository extends JpaRepository<ChatRoomEntity, Long> {
+}

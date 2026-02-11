@@ -26,6 +26,8 @@ spring:
     username: ${sm@db-username}
     password: ${sm@db-password}
   data:
+    mongodb:
+      uri: ${sm@mongo-url}
     redis:
       host: ${sm@redis-host}
       port: 6378
