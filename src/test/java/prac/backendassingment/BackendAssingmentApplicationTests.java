@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendAssingmentApplicationTests {
+class BackendAssingmentApplicationTests extends TestContainerConfig{
 
     @Test
     void contextLoads() {

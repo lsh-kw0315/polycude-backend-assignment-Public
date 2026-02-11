@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
-public class JpaTest {
+public class JpaTest extends TestContainerConfig {
     @Autowired
     private DiscountService discountService;
     @Autowired
@@ -40,17 +40,6 @@ public class JpaTest {
     private ProductService productService;
     @Autowired
     private MemberRepository memberRepository;
-
-    // 1. MongoDB 컨테이너
-    @Container
-    @ServiceConnection
-    static MongoDBContainer mongo = new MongoDBContainer("mongo:6.0");
-
-    // 2. Redis 컨테이너
-    @Container
-    @ServiceConnection
-    static GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:7.2-alpine"))
-            .withExposedPorts(6379);
 
     @Test
     @Rollback
